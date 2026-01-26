@@ -12,8 +12,10 @@ export default function HomeScreen({
   cameraInputRef,
   handleImageUpload,
   carouselIndex,
-  setCarouselIndex
+  setCarouselIndex,
+  handlePromptSubmit
 }) {
+    const [promptText, setPromptText] = useState("");
   const ITEMS_PER_PAGE = 5
   const totalPages = Math.ceil(STYLE_PRESETS.length / ITEMS_PER_PAGE)
   
@@ -98,12 +100,34 @@ export default function HomeScreen({
   return (
     <>
       <header className="header">
-        <div className="search-bar" onClick={() => fileInputRef.current.click()}>
+        <div className="search-bar">
           <button className="image-upload-icon" onClick={() => fileInputRef.current.click()}>
             🖼️
           </button>
-          <input type="text" placeholder="Beskriv en ny bild" readOnly />
-          <button className="voice-btn" onClick={(e) => { e.stopPropagation(); }}>🎤</button>
+          <input
+            type="text"
+            placeholder="Beskriv en ny bild"
+            value={promptText}
+            onChange={e => setPromptText(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && promptText.trim()) {
+                handlePromptSubmit(promptText)
+                setPromptText("")
+              }
+            }}
+          />
+          <button
+            className="send-prompt-btn"
+            onClick={() => {
+              if (promptText.trim()) {
+                handlePromptSubmit(promptText)
+                setPromptText("")
+              }
+            }}
+          >
+            ➤
+          </button>
+          <button className="voice-btn" onClick={e => { e.stopPropagation(); }}>🎤</button>
         </div>
       </header>
 

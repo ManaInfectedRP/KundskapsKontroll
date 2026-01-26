@@ -11,6 +11,10 @@ import {
 } from './utils/api'
 import HomeScreen from './components/HomeScreen'
 import ChatRoom from './components/ChatRoom'
+import { mockChatRoomData } from './mockChatRoomData'
+
+// Set to true to show ChatRoom with mock data for design
+const MOCK_CHATROOM = false;
 
 function App() {
   const [selectedStyle, setSelectedStyle] = useState('realistic')
@@ -210,9 +214,46 @@ function App() {
     setGeneratedPrompt({ prompt: prompt.prompt, base_caption: prompt.base_caption })
   }
 
+  // Handle prompt submit for /generate-image
+  const handlePromptSubmit = async (promptText) => {
+    if (!promptText.trim()) return;
+    setIsGeneratingImage(true);
+    setGeneratedPrompt({ prompt: promptText });
+    setGeneratedImage(null);
+    setAnalysisData(null);
+    setInChatRoom(true);
+    try {
+      frontendLog.info('API Call - Generate Image (prompt input)', { endpoint: '/generate-image', prompt: promptText, style: selectedStyle });
+      const data = await generateImageAPI(promptText, selectedStyle);
+      if (data.success) {
+        setGeneratedImage(data.image);
+        setGeneratedPrompt({ prompt: data.prompt });
+      }
+    } catch (error) {
+      frontendLog.error('Generate Image (prompt input) - Exception', { error: error.message });
+      alert(`Error generating image: ${error.message}`);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
   return (
     <div className="app">
-      {!inChatRoom ? (
+      {MOCK_CHATROOM ? (
+        <ChatRoom
+          capturedImage={mockChatRoomData.capturedImage}
+          useRecreateMode={mockChatRoomData.useRecreateMode}
+          isLoading={mockChatRoomData.isLoading}
+          generatedPrompt={mockChatRoomData.generatedPrompt}
+          analysisData={mockChatRoomData.analysisData}
+          isGeneratingImage={mockChatRoomData.isGeneratingImage}
+          generatedImage={mockChatRoomData.generatedImage}
+          resetSession={() => {}}
+          generateImage={() => {}}
+          recreatePrompt={() => {}}
+          chatScrollRef={chatScrollRef}
+        />
+      ) : !inChatRoom ? (
         <HomeScreen 
           selectedStyle={selectedStyle}
           setSelectedStyle={setSelectedStyle}
@@ -225,6 +266,7 @@ function App() {
           handleImageUpload={handleImageUpload}
           carouselIndex={carouselIndex}
           setCarouselIndex={setCarouselIndex}
+          handlePromptSubmit={handlePromptSubmit}
         />
       ) : (
         <ChatRoom 
