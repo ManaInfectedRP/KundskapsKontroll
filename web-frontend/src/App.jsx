@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
-import { API_URL } from './config'
+import { API_URL, STYLE_PRESETS } from './config'
 import { 
   frontendLog, 
   loadRecentPrompts, 
@@ -281,6 +281,8 @@ function App() {
           generateImage={generateImage}
           recreatePrompt={recreatePrompt}
           chatScrollRef={chatScrollRef}
+          selectedStyle={STYLE_PRESETS.find(s => s.id === selectedStyle)}
+          setSelectedStyle={setSelectedStyle}
         />
       )}
     </div>
