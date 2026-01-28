@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 import logging
 from datetime import datetime
@@ -33,9 +34,12 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(prompts.router, tags=["prompts"])
-app.include_router(images.router, tags=["images"])
-app.include_router(database.router, tags=["database"])
+app.include_router(prompts.router, prefix="/api", tags=["prompts"])
+app.include_router(images.router, prefix="/api", tags=["images"])
+app.include_router(database.router, prefix="/api", tags=["database"])
+
+# Mount static files for the frontend
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 @app.on_event("startup")
 async def startup_event():
@@ -47,7 +51,7 @@ async def startup_event():
     load_all_models()
     logger.info("All models loaded successfully")
 
-@app.get("/")
+@app.get("/api/")
 async def root():
     """Health check endpoint"""
     from models import get_clip_model
@@ -60,16 +64,16 @@ async def root():
             "clip": clip_model is not None
         },
         "endpoints": {
-            "/generate-prompt": "POST - Generate prompt from image",
-            "/analyze-image": "POST - Analyze image features",
-            "/generate-image": "POST - Generate image from prompt",
-            "/recreate-image": "POST - Analyze uploaded image and generate AI recreation",
-            "/styles": "GET - Get available styles",
-            "/prompts": "GET - Get all saved prompts"
+            "/api/generate-prompt": "POST - Generate prompt from image",
+            "/api/analyze-image": "POST - Analyze image features",
+            "/api/generate-image": "POST - Generate image from prompt",
+            "/api/recreate-image": "POST - Analyze uploaded image and generate AI recreation",
+            "/api/styles": "GET - Get available styles",
+            "/api/prompts": "GET - Get all saved prompts"
         }
     }
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Detailed health check"""
     from models import get_clip_model

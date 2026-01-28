@@ -824,9 +824,6 @@ export default function ChatRoom({
                 autoFocus
               />
               <div className="input-footer">
-                <button className="voice-btn">
-                  <Mic />
-                </button>
                 <button
                   className="generate-btn"
                   onClick={handleGenerate}

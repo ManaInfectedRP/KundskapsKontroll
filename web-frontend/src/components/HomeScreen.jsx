@@ -477,7 +477,6 @@ export default function HomeScreen({
         <div className="header-left">
           <div className="logo">Kundskapskontrollen</div>
         </div>
-        <button className="close-btn">×</button>
       </header>
 
       <div className="home-content">

@@ -1,4 +1,4 @@
-export const API_URL = 'http://192.168.1.156:8000'
+export const API_URL = '/api'
 
 export const STYLE_PRESETS = [
   { id: 'realistic', name: 'Realistisk', emoji: '📷' },

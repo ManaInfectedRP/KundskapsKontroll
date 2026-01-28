@@ -501,7 +501,6 @@
 .chat-room {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: #18181b;
   max-width: 1800px;
   width: 100%;
