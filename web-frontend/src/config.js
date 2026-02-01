@@ -4,6 +4,7 @@ export const STYLE_PRESETS = [
   { id: 'realistic', name: 'Realistisk', emoji: '📷' },
   { id: 'artistic', name: 'Konstnärlig', emoji: '🎨' },
   { id: 'anime', name: 'Anime', emoji: '🎌' },
+  { id: 'japaneseRetro', name: 'Japansk Retro', emoji: '🌸' },
   { id: 'cyberpunk', name: 'Cyberpunk', emoji: '🌃' },
   { id: 'fantasy', name: 'Fantasy', emoji: '🧙' },
   { id: 'sketch', name: 'Skiss', emoji: '✏️' },

@@ -306,11 +306,11 @@ export default function HomeScreen({
         }
 
         .styles-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 16px;
-          overflow-x: auto;
-          padding-bottom: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 24px;
+          padding: 40px 0;
         }
 
         .style-card {
@@ -321,6 +321,13 @@ export default function HomeScreen({
           cursor: pointer;
           transition: all 0.3s;
           opacity: ${isDragging ? 0.7 : 1};
+          flex-shrink: 0;
+          width: 180px;
+        }
+
+        .style-card.ghost {
+          opacity: 0.3;
+          transform: scale(0.85);
         }
 
         .style-card:hover {
@@ -526,30 +533,56 @@ export default function HomeScreen({
         <div className="section">
           <div className="section-header">
             <h2 className="section-title">Prova en stil på en bild</h2>
+            <div className="section-nav">
+              <button className="nav-btn" onClick={prevSlide}>
+                <ChevronLeft size={20} />
+              </button>
+              <button className="nav-btn" onClick={nextSlide}>
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
           <div
             ref={carouselRef}
             className="styles-grid"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
             style={{
-              cursor: dragStart !== null ? 'grabbing' : 'grab',
+              cursor: 'pointer',
               userSelect: 'none'
             }}
           >
-            {STYLE_PRESETS.slice(0, 8).map((style, index) => (
-              <div
-                key={style.id}
-                className={`style-card ${selectedStyle === style.id ? 'selected' : ''}`}
-                onClick={() => handleStyleClick(style.id)}
-                onDragStart={(e) => e.preventDefault()}
-              >
-                <div className="style-preview">{style.emoji}</div>
-                <div className="style-name">{style.name}</div>
-              </div>
-            ))}
+            {(() => {
+              const selectedIndex = STYLE_PRESETS.findIndex(s => s.id === selectedStyle);
+              const prevIndex = (selectedIndex - 1 + STYLE_PRESETS.length) % STYLE_PRESETS.length;
+              const nextIndex = (selectedIndex + 1) % STYLE_PRESETS.length;
+              
+              return (
+                <>
+                  <div
+                    className="style-card ghost"
+                    onClick={() => handleStyleClick(STYLE_PRESETS[prevIndex].id)}
+                  >
+                    <div className="style-preview">{STYLE_PRESETS[prevIndex].emoji}</div>
+                    <div className="style-name">{STYLE_PRESETS[prevIndex].name}</div>
+                  </div>
+                  
+                  <div
+                    className="style-card selected"
+                    onClick={() => handleStyleClick(STYLE_PRESETS[selectedIndex].id)}
+                  >
+                    <div className="style-preview">{STYLE_PRESETS[selectedIndex].emoji}</div>
+                    <div className="style-name">{STYLE_PRESETS[selectedIndex].name}</div>
+                  </div>
+                  
+                  <div
+                    className="style-card ghost"
+                    onClick={() => handleStyleClick(STYLE_PRESETS[nextIndex].id)}
+                  >
+                    <div className="style-preview">{STYLE_PRESETS[nextIndex].emoji}</div>
+                    <div className="style-name">{STYLE_PRESETS[nextIndex].name}</div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
 
