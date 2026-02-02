@@ -14,7 +14,7 @@ import ChatRoom from './components/ChatRoom'
 import { mockChatRoomData } from './mockChatRoomData'
 
 // Set to true to show ChatRoom with mock data for design
-const MOCK_CHATROOM = false;
+const MOCK_CHATROOM = true;
 
 function App() {
   const [selectedStyle, setSelectedStyle] = useState('realistic')
@@ -252,6 +252,7 @@ function App() {
           generateImage={() => {}}
           recreatePrompt={() => {}}
           chatScrollRef={chatScrollRef}
+          isMockMode={true}
         />
       ) : !inChatRoom ? (
         <HomeScreen 

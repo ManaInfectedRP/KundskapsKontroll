@@ -1,12 +1,13 @@
 // Mock data for ChatRoom redesign
 export const mockChatRoomData = {
   capturedImage: '/images/captured.jpg',
-  useRecreateMode: false,
-  isLoading: false,
   generatedPrompt: {
     prompt: 'Omvandla motivet till en japansk animefigur från 1980-talet i retro-futuristisk stil. Använd tjocka linjer, något överdrivna anletsdrag och cel-skuggor typiska för handmålade animeringar. Tillämpa livliga men något omättade färger och dramatiskt neonljus. Placera figuren i en dynamisk cyberpunkmiljö med subtilt filmbrus, glödande skyltar och stämningsfull dimma. Den slutgiltiga bilden ska kännas som en klassisk 80-talsillustration med sci-fi-tema: energisk, stiliserad, nostalgisk och helt handmålad.',
     base_caption: 'a detailed photograph'
   },
+  generatedImage: '/images/generated.png',
+  useRecreateMode: true,
+  isLoading: false,
   analysisData: {
     colors: 'neon, blå, lila',
     lighting: 'cyberpunk, neon',
@@ -25,7 +26,6 @@ export const mockChatRoomData = {
     }
   },
   isGeneratingImage: false,
-  generatedImage: '/images/generated.png',
   chatHistory: [
     {
       type: 'user',

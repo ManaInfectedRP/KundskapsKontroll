@@ -17,7 +17,8 @@ export default function ChatRoom({
   resetSession,
   generateImage,
   recreatePrompt,
-  chatScrollRef
+  chatScrollRef,
+  isMockMode = false
 }) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [showStyleModal, setShowStyleModal] = useState(false);
@@ -287,9 +288,61 @@ export default function ChatRoom({
           background: rgba(102, 126, 234, 1);
         }
 
+        .image-generation-layout {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-bottom: 24px;
+        }
+
+        .side-content {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          max-width: 600px;
+          width: 100%;
+        }
+
+        .generated-image-section {
+          width: 100%;
+        }
+
+        .reference-image-section {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .reference-label {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.6);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 600;
+        }
+
+        .reference-image {
+          width: 100%;
+          height: auto;
+          max-width: 300px;
+          object-fit: cover;
+          border-radius: 12px;
+          border: 2px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .prompt-display {
+          background: rgba(0, 0, 0, 0.3);
+          padding: 16px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.85);
+          font-size: 13px;
+        }
+
         .image-display {
           width: 100%;
-          margin-bottom: 32px;
           border-radius: 16px;
           overflow: hidden;
           background: rgba(255, 255, 255, 0.05);
@@ -654,8 +707,32 @@ export default function ChatRoom({
           margin-bottom: 8px;
         }
 
-        .style-name {
+        .generation-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          padding: 12px 16px;
+          background: rgba(139, 92, 246, 0.1);
+          border-radius: 8px;
+          border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .info-label {
           font-size: 12px;
+          color: rgba(255, 255, 255, 0.6);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .style-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          background: rgba(139, 92, 246, 0.3);
+          border-radius: 12px;
+          font-size: 13px;
           color: #ececec;
           font-weight: 500;
         }
@@ -683,7 +760,42 @@ export default function ChatRoom({
           background: rgba(255, 255, 255, 0.1);
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+          .image-generation-layout {
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .generated-image-section {
+            width: 100%;
+          }
+
+          .side-content {
+            width: 100%;
+            flex-direction: row;
+            gap: 16px;
+          }
+
+          .reference-image-section {
+            flex-shrink: 0;
+          }
+
+          .reference-image {
+            width: 150px;
+            height: 200px;
+          }
+
+          .prompt-display {
+            flex: 1;
+            max-height: none;
+            font-size: 13px;
+            padding: 12px;
+          }
+
+          .image-display {
+            width: 100%;
+          }
+
           .style-grid {
             grid-template-columns: 1fr;
           }
@@ -704,32 +816,59 @@ export default function ChatRoom({
       <div className="chat-content">
         <div className="content-wrapper">
           {generatedImage || isGeneratingImage ? (
-            <div className="image-display">
-              <div className="image-container">
-                {isGeneratingImage ? (
-                  <div className="loading-state">
-                    <div className="spinner"></div>
-                    <div className="loading-text">Skapar bild...</div>
-                  </div>
-                ) : (
-                  <img src={generatedImage} alt="Generated" />
-                )}
+            <>
+              <div className="generation-info">
+                <span className="info-label">Generering pågår</span>
+                <div className="style-badge">
+                  {selectedStyle?.emoji || '🎨'} {selectedStyle?.name || 'Anpassad stil'}
+                </div>
               </div>
-              {generatedImage && !isGeneratingImage && (
-                <div className="image-caption">
-                  <div className="caption-label">
-                    Bilden har skapats • {selectedStyle?.name || 'Anpassad stil'}
-                  </div>
-                  <div className="caption-text">{generatedPrompt?.prompt || prompt}</div>
-                  <div className="image-actions">
-                    <button className="action-btn" onClick={downloadImage}>
-                      <Download size={16} />
-                      Ladda ner
-                    </button>
+              <div className="image-generation-layout">
+                <div className="side-content">
+                  {isMockMode && capturedImage && (
+                    <div className="reference-image-section">
+                      <div className="reference-label">Referensbild</div>
+                      <img src={capturedImage} alt="Reference" className="reference-image" />
+                    </div>
+                  )}
+                  
+                  {generatedPrompt?.prompt && (
+                    <div className="prompt-display">
+                      {generatedPrompt.prompt}
+                    </div>
+                  )}
+
+                  <div className="generated-image-section">
+                    <div className="image-display">
+                      <div className="image-container">
+                        {isGeneratingImage ? (
+                          <div className="loading-state">
+                            <div className="spinner"></div>
+                            <div className="loading-text">Skapar bild...</div>
+                          </div>
+                        ) : (
+                          <img src={generatedImage} alt="Generated" />
+                        )}
+                      </div>
+                      {generatedImage && !isGeneratingImage && (
+                        <div className="image-caption">
+                          <div className="caption-label">
+                            Bilden har skapats • {selectedStyle?.name || 'Anpassad stil'}
+                          </div>
+                          <div className="caption-text">{generatedPrompt?.prompt || prompt}</div>
+                          <div className="image-actions">
+                            <button className="action-btn" onClick={downloadImage}>
+                              <Download size={16} />
+                              Ladda ner
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            </>
           ) : (
             <div className="chat-container" ref={chatScrollRef}>
               {/* Uploaded Image at Top */}
